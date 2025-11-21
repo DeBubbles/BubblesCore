@@ -21,7 +21,7 @@ Voeg eerst JitPack toe aan je repositories:
 <dependencies>
     <dependency>
         <groupId>com.github.DeBubbles</groupId>
-        <artifactId>BubblesCore</artifactId> <!-- repo naam -->
+        <artifactId>BubblesCore</artifactId>
         <version>v1.0.0</version>
     </dependency>
 </dependencies>
