@@ -1,6 +1,6 @@
-# 🫧 Bubbles Core
+# 🫧 BubblesCore
 
-Bubbles Core is een lichte Java-library voor Spigot/Paper plugins, met handige utilities algemene plugin development.  
+BubblesCore is een lichte Java-library voor Spigot/Paper plugins, met handige utilities algemene plugin development.  
 Deze library werkt **zonder dat de server een aparte plugin hoeft te draaien**—je shadet hem gewoon in je eigen plugin.
 
 ---
@@ -29,7 +29,7 @@ Voeg eerst JitPack toe aan je repositories:
 ---
 ## 🧱 Items
 
-Bubbles Core bevat een `ItemBuilder` om eenvoudig custom items te maken met kleuren, lore, enchants, flags en glow-effecten.
+BubblesCore bevat een `ItemBuilder` om eenvoudig custom items te maken met kleuren, lore, enchants, flags en glow-effecten.
 
 ### ▶ Voorbeeld (Material)
 
@@ -45,7 +45,7 @@ ItemStack item = ItemBuilder.of(Material.DIAMOND_SWORD)
 ---
 ## 🎨 Kleuren (ColorUtil)
 
-Bubbles Core bevat een `ColorUtil` helper voor het converteren van kleurcodes in messages en itemnamen.
+BubblesCore bevat een `ColorUtil` helper voor het converteren van kleurcodes in messages en itemnamen.
 
 Ondersteunt:
 
@@ -77,7 +77,7 @@ ItemStack emerald = ItemBuilder.of(XMaterial.EMERALD)
 ---
 ## 🔖 PersistentData Tags (Custom Item Metadata)
 
-Bubbles Core ondersteunt het opslaan van custom data in items via Bukkit’s `PersistentDataContainer`.  
+BubblesCore ondersteunt het opslaan van custom data in items via Bukkit’s `PersistentDataContainer`.  
 Hiermee kun je o.a. item-types, identifiers, waarden en extra informatie veilig opslaan in NBT.
 
 Deze data blijft bestaan tussen restarts en werkt zonder NMS.
@@ -97,10 +97,8 @@ public void onEnable() {
 ---
 ## 🧩 GUI System (Lightweight, zelf event handling)
 
-Bubbles Core biedt een lichte basis voor GUIs via `BubblesMenu`.  
+BubblesCore biedt een lichte basis voor GUIs via `BubblesMenu`.  
 Elke GUI is een class die `BubblesMenu` uitbreidt en fungeert als `InventoryHolder`.
-
-> Er is **geen ingebouwde event listener** — jij beslist zelf wat er gebeurt in `InventoryClickEvent`, inclusief of cancel nodig is.
 
 ---
 
