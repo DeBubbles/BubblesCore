@@ -28,11 +28,9 @@ public abstract class GUI implements InventoryHolder {
 
     protected abstract void setupItems();
 
-    public abstract void onClick(InventoryClickEvent event);
+    public abstract void onClick(InventoryClickEvent e);
 
-    public void onClose(InventoryCloseEvent event) {
-        // optioneel
-    }
+    public abstract void onClose(InventoryCloseEvent e);
 
     public void open() {
         setupItems();
