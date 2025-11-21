@@ -130,3 +130,58 @@ public class ExampleMenu extends GUI {
     }
 }
 ```
+---
+## ⚡ Commands & SubCommand Systeem
+
+BubblesCore bevat een lichtgewicht command handler die subcommands ondersteunt, inclusief permissies, argument-controle en tabcompletion.
+
+Het werkt zonder framework en blijft volledig aanpasbaar.
+
+---
+
+### ▶ Een command handler registreren
+
+In jouw plugin:
+
+```java
+@Override
+public void onEnable() {
+    BubblesCommandHandler handler = new BubblesCommandHandler("bubbles")
+            .register(new ReloadSubCommand())
+            .register(new CoinsAddSubCommand());
+
+    Objects.requireNonNull(getCommand("bubbles")).setExecutor(handler);
+    Objects.requireNonNull(getCommand("bubbles")).setTabCompleter(handler);
+}
+```
+### ▶ SubCommand Voorbeeld
+```java
+public class CoinsAddSubCommand extends SubCommand {
+
+    public AddSubCommand() {
+        super("add", "bubbles.coins.add", true);
+        setArgumentsHint("<speler> <amount>");
+        // Verwacht 2 argumenten
+    }
+
+    @Override
+    public void onCommand(CommandSender sender, List<String> args) {
+        String target = args.get(0);
+        int amount = Integer.parseInt(args.get(1));
+        sender.sendMessage("Je gaf " + amount + " coins aan " + target);
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, List<String> args) {
+        if (args.size() == 1) {
+            return Bukkit.getOnlinePlayers().stream()
+                    .map(Player::getName)
+                    .toList();
+        }
+        if (args.size() == 2) {
+            return List.of("1", "10", "50", "100");
+        }
+        return List.of();
+    }
+}
+```
