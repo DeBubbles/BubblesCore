@@ -2,10 +2,12 @@ package me.bubbles.items;
 
 import me.bubbles.text.ColorUtil;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Arrays;
 import java.util.List;
@@ -137,5 +139,17 @@ public class ItemBuilder {
             item.setItemMeta(meta);
         }
         return item;
+    }
+
+    // ---------- TAGS ----------
+
+    public ItemBuilder tagString(String key, String value) {
+        TagUtil.setString(item, key, value);
+        return this;
+    }
+
+    public ItemBuilder tagInt(String key, int value) {
+        TagUtil.setInt(item, key, value);
+        return this;
     }
 }
