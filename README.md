@@ -22,7 +22,7 @@ Voeg eerst JitPack toe aan je repositories:
     <dependency>
         <groupId>com.github.DeBubbles</groupId>
         <artifactId>BubblesCore</artifactId> <!-- repo naam -->
-        <version>1.0.0</version> <!-- vervang door een release/tag -->
+        <version>v1.0.0</version>
     </dependency>
 </dependencies>
 ```
