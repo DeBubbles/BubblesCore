@@ -75,3 +75,60 @@ ItemStack emerald = ItemBuilder.of(XMaterial.EMERALD)
         .build();
 ```
 ---
+## 🔖 PersistentData Tags (Custom Item Metadata)
+
+Bubbles Core ondersteunt het opslaan van custom data in items via Bukkit’s `PersistentDataContainer`.  
+Hiermee kun je o.a. item-types, identifiers, waarden en extra informatie veilig opslaan in NBT.
+
+Deze data blijft bestaan tussen restarts en werkt zonder NMS.
+
+---
+
+### ▶ Initialisatie (vereist)
+
+Voeg dit toe in je plugin's `onEnable()`:
+
+```java
+@Override
+public void onEnable() {
+    TagUtil.init(this); // vereist voor namespaced keys
+}
+```
+---
+## 🧩 GUI System (Lightweight, zelf event handling)
+
+Bubbles Core biedt een lichte basis voor GUIs via `BubblesMenu`.  
+Elke GUI is een class die `BubblesMenu` uitbreidt en fungeert als `InventoryHolder`.
+
+> Er is **geen ingebouwde event listener** — jij beslist zelf wat er gebeurt in `InventoryClickEvent`, inclusief of cancel nodig is.
+
+---
+
+### ▶ Een GUI aanmaken
+
+Maak een class die `BubblesMenu` extend:
+
+```java
+public class ExampleMenu extends GUI {
+
+    public ExampleMenu(Player viewer) {
+        super(viewer, 27, "&bVoorbeeld Menu");
+    }
+
+    @Override
+    protected void setupItems() {
+        inventory.setItem(13, ItemBuilder.of(Material.EMERALD)
+                .name("&aKlik mij!")
+                .build());
+    }
+
+    @Override
+    public void onClick(InventoryClickEvent event) {
+        // jouw eigen logica
+        if (event.getRawSlot() == 13) {
+            viewer.sendMessage("Je klikte op de emerald!");
+            event.setCancelled(true); // zelf kiezen ✨
+        }
+    }
+}
+```
