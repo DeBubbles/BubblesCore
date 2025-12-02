@@ -12,6 +12,7 @@ public final class ColorUtil {
 
     private static final Pattern HEX_PATTERN = Pattern.compile("<#[a-fA-F0-9]{6}>");
     private static final boolean HEX_SUPPORTED = isHexSupported();
+    private static String prefix = "";
 
     private ColorUtil() {}
 
@@ -50,11 +51,15 @@ public final class ColorUtil {
         return ChatColor.translateAlternateColorCodes('&', colored);
     }
 
-    public static String color(String message, String prefix) {
-        if (prefix != null && !prefix.isEmpty()) {
-            message = prefix + message;
+    public static String color(String message, Boolean prefix) {
+        if (prefix && !ColorUtil.prefix.isEmpty()) {
+            message = ColorUtil.prefix + message;
         }
         return color(message);
+    }
+
+    public static void setPrefix(String prefix){
+        ColorUtil.prefix = prefix;
     }
 
     public static List<String> color(List<String> lines) {
