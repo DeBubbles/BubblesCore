@@ -190,29 +190,33 @@ public class CoinsAddSubCommand extends SubCommand {
 ```java
 public class MyPlugin extends JavaPlugin {
 
-    private YamlPlayerDataStore dataStore;
+    private YamlDataStore<UUID> playerStore;
 
     @Override
     public void onEnable() {
-        dataStore = new YamlPlayerDataStore(this, "playerdata");
+        playerStore = new YamlDataStore<>(
+                this,
+                "playerdata",
+                uuid -> uuid.toString() // bestandsnaam
+        );
     }
 
-    public YamlPlayerDataStore getDataStore() {
-        return dataStore;
+    public YamlDataStore<UUID> getPlayerStore() {
+        return playerStore;
     }
 }
 ```
 
 ### ▶ Voorbeeld 
 ```java
-public class SpeedupService {
+public class PlayerDataService {
 
-    private final YamlPlayerDataStore store;
+    private final YamlDataStore<UUID> store;
 
-    public SpeedupService(JavaPlugin plugin) {
-        this.store = new YamlPlayerDataStore(plugin, "playerdata");
+    public PlayerDataService(JavaPlugin plugin) {
+        this.store = new YamlDataStore<>(plugin, "playerdata", UUID::toString);
     }
-
+    
     public int getSpeedups(UUID uuid) {
         return store.getInt(uuid, "speedups", 0);
     }
