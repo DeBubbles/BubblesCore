@@ -185,3 +185,48 @@ public class CoinsAddSubCommand extends SubCommand {
     }
 }
 ```
+--- 
+## 🗂️ Player Data (YamlPlayerDataStore)
+```java
+public class MyPlugin extends JavaPlugin {
+
+    private YamlPlayerDataStore dataStore;
+
+    @Override
+    public void onEnable() {
+        dataStore = new YamlPlayerDataStore(this, "playerdata");
+    }
+
+    public YamlPlayerDataStore getDataStore() {
+        return dataStore;
+    }
+}
+```
+
+### ▶ Voorbeeld 
+```java
+public class SpeedupService {
+
+    private final YamlPlayerDataStore store;
+
+    public SpeedupService(JavaPlugin plugin) {
+        this.store = new YamlPlayerDataStore(plugin, "playerdata");
+    }
+
+    public int getSpeedups(UUID uuid) {
+        return store.getInt(uuid, "speedups", 0);
+    }
+
+    public int addSpeedups(UUID uuid, int delta) {
+        int updated = Math.max(0, getSpeedups(uuid) + delta);
+        store.set(uuid, "speedups", updated);
+        store.save(uuid);
+        return updated;
+    }
+
+    public void unload(UUID uuid) {
+        store.unload(uuid, true);
+    }
+}
+```
+
