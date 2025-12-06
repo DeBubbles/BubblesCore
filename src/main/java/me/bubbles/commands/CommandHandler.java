@@ -17,6 +17,8 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     private final String commandName;
     private final List<SubCommand> subCommands = new ArrayList<>();
 
+    private SubCommand rootSubCommand = null;
+
     private String noPermissionMessage = "&cJe hebt hier geen permissie voor.";
     private String playersOnlyMessage = "&cDit commando is alleen voor spelers.";
     private String unknownCommandMessage = "&cOnbekend subcommand.";
@@ -31,12 +33,35 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         return this;
     }
 
+    public CommandHandler root(SubCommand root) {
+        this.rootSubCommand = root;
+        return this;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!command.getName().equalsIgnoreCase(commandName)) return true;
 
+        // Geen args → rootSubCommand proberen
         if (args.length == 0) {
-            sender.sendMessage(ColorUtil.color(unknownCommandMessage));
+            if (rootSubCommand != null) {
+                if (!checkSenderForSubCommand(sender, rootSubCommand)) {
+                    return true;
+                }
+
+                List<String> rootArgs = Collections.emptyList();
+                if (!checkArgsForSubCommand(sender, label, rootSubCommand, rootArgs)) {
+                    return true;
+                }
+
+                try {
+                    rootSubCommand.onCommand(sender, new ArrayList<>(rootArgs));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                sender.sendMessage(ColorUtil.color(unknownCommandMessage));
+            }
             return true;
         }
 
@@ -53,29 +78,37 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             }
         }
 
+        // Geen matchend subcommand → rootSubCommand proberen
         if (match == null) {
-            sender.sendMessage(ColorUtil.color(unknownCommandMessage));
-            return true;
-        }
+            if (rootSubCommand != null) {
+                if (!checkSenderForSubCommand(sender, rootSubCommand)) {
+                    return true;
+                }
 
-        if (match.isPlayerOnly() && !(sender instanceof org.bukkit.entity.Player)) {
-            sender.sendMessage(ColorUtil.color(playersOnlyMessage));
-            return true;
-        }
+                List<String> rootArgs = new ArrayList<>(Arrays.asList(args));
+                if (!checkArgsForSubCommand(sender, label, rootSubCommand, rootArgs)) {
+                    return true;
+                }
 
-        if (match.getPermission() != null && !match.getPermission().isEmpty()) {
-            if (!sender.hasPermission(match.getPermission())) {
-                sender.sendMessage(ColorUtil.color(noPermissionMessage));
-                return true;
+                try {
+                    rootSubCommand.onCommand(sender, new ArrayList<>(rootArgs));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                sender.sendMessage(ColorUtil.color(unknownCommandMessage));
             }
+            return true;
+        }
+
+        // Normale subcommand flow
+        if (!checkSenderForSubCommand(sender, match)) {
+            return true;
         }
 
         ArrayList<String> subArgs = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
 
-        if (match.getExpectedArgs() != -1 && subArgs.size() != match.getExpectedArgs()) {
-            String usage = "/" + label + " " + match.getBaseName() + " " + match.getArgumentsHint();
-            String msg = invalidArgsMessage.replace("{usage}", usage);
-            sender.sendMessage(ColorUtil.color(msg));
+        if (!checkArgsForSubCommand(sender, label, match, subArgs)) {
             return true;
         }
 
@@ -85,6 +118,47 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             e.printStackTrace();
         }
 
+        return true;
+    }
+
+    private boolean checkSenderForSubCommand(CommandSender sender, SubCommand sub) {
+        if (sub.isPlayerOnly() && !(sender instanceof org.bukkit.entity.Player)) {
+            sender.sendMessage(ColorUtil.color(playersOnlyMessage));
+            return false;
+        }
+
+        String perm = sub.getPermission();
+        if (perm != null && !perm.isEmpty() && !sender.hasPermission(perm)) {
+            sender.sendMessage(ColorUtil.color(noPermissionMessage));
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkArgsForSubCommand(CommandSender sender, String label, SubCommand sub, List<String> args) {
+        int expected = sub.getExpectedArgs();
+        if (expected != -1 && args.size() != expected) {
+            String usage;
+            if (sub == rootSubCommand) {
+                // Voor root: gebruik gewoon /label + argsHint
+                String hint = sub.getArgumentsHint();
+                if (hint == null || hint.isEmpty()) {
+                    usage = "/" + label;
+                } else {
+                    usage = "/" + label + " " + hint;
+                }
+            } else {
+                String hint = sub.getArgumentsHint();
+                if (hint == null) hint = "";
+                usage = "/" + label + " " + sub.getBaseName()
+                        + (hint.isEmpty() ? "" : " " + hint);
+            }
+
+            String msg = invalidArgsMessage.replace("{usage}", usage);
+            sender.sendMessage(ColorUtil.color(msg));
+            return false;
+        }
         return true;
     }
 
