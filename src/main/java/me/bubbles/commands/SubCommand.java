@@ -23,6 +23,10 @@ public abstract class SubCommand {
         this(name, playerOnly);
         this.permission = perm;
     }
+    public SubCommand(String name, int expectedArgs, boolean playerOnly) {
+        this(name, playerOnly);
+        this.expectedArgs = expectedArgs;
+    }
     public SubCommand(String name, String perm, int expectedArgs, boolean playerOnly) {
         this(name, perm, playerOnly);
         this.expectedArgs = expectedArgs;
