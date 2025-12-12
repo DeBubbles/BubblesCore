@@ -1,10 +1,8 @@
 package me.bubbles.commands;
 
 import me.bubbles.text.ColorUtil;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.*;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,8 +22,18 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
     private String unknownCommandMessage = "&cOnbekend subcommand.";
     private String invalidArgsMessage = "&cVerkeerde argumenten, gebruik: &e{usage}";
 
-    public CommandHandler(String commandName) {
+    public CommandHandler(JavaPlugin plugin, String commandName) {
         this.commandName = commandName;
+
+        PluginCommand cmd = plugin.getCommand(commandName);
+        if (cmd == null) {
+            throw new IllegalStateException(
+                    "Command '" + commandName + "' not found. Did you register it in plugin.yml?"
+            );
+        }
+
+        cmd.setExecutor(this);
+        cmd.setTabCompleter(this);
     }
 
     public CommandHandler register(SubCommand subCommand) {
